@@ -18,10 +18,11 @@ export function Home() {
 				setItems(arr);
 				setIsLoading(false);	// Выключить показ скелетона после загрузки пицц с сервера
 			})
+		window.scrollTo(0, 0);
 	}, [])
 
 	return (
-		<>
+		<div className="container">
 			<div className="content__top">
 				<Categories />
 				<Sort />
@@ -33,6 +34,6 @@ export function Home() {
 					: items.map((obj) => <PizzaBlock key={obj.id} {...obj} />)									// Отобразить реальные пиццы
 				}
 			</div>
-		</>
+		</div>
 	)
 }
