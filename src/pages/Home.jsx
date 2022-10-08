@@ -4,9 +4,10 @@ import { Categories } from "../components/Categories";
 import { Sort } from "../components/Sort";
 import { PizzaBlock } from "../components/PizzaBlock/PizzaBlock";
 import { PizzaBlockSceleton } from "../components/PizzaBlock/PizzaBlockSceleton";
+import { Pagination } from "../components/Pagination/Pagination";
 
 
-export function Home() {
+export function Home({ searchValue }) {
 
 	const [items, setItems] = React.useState([]);
 	const [isLoading, setIsLoading] = React.useState(true);		// Управляет тем что отображается - скелетон или пиццы
@@ -16,6 +17,7 @@ export function Home() {
 		name: 'популярности', sortProperty: 'rating'
 	});
 
+	const [currentPage, setCurrentPage] = React.useState(1);	// Хук изменения страницы
 
 	React.useEffect(() => {
 		setIsLoading(true);
@@ -24,14 +26,26 @@ export function Home() {
 		const order = sortType.sortProperty.includes('-') ? 'asc' : 'desc';
 		const sortBy = sortType.sortProperty.replace('-', '');
 
-		fetch(`https://633b5933c1910b5de0c41000.mockapi.io/items?${category}&sortBy=${sortBy}&order=${order}`)
+		// Вариант фильтрации через запрос на бэкенд
+		const search = searchValue ? `&search=${searchValue}` : '';
+
+		fetch(`https://633b5933c1910b5de0c41000.mockapi.io/items?page=${currentPage}&limit=4${category}&sortBy=${sortBy}&order=${order}${search}`)
 			.then((response) => response.json())
 			.then((arr) => {
 				setItems(arr);
 				setIsLoading(false);	// Выключить показ скелетона после загрузки пицц с сервера
 			})
 		window.scrollTo(0, 0);
-	}, [categoryId, sortType])
+	}, [categoryId, sortType, searchValue, currentPage])
+
+
+	// Вариант фильтрации, когда данные статичны и нет необходимости обращаться к бэкенду 
+	// const pizzas = items
+	// 	.filter(obj => obj.title.toLowerCase().includes(searchValue.toLowerCase()) ? true : false)
+	// 	.map((obj) => <PizzaBlock key={obj.id} {...obj} />);
+
+	const pizzas = items.map((obj) => <PizzaBlock key={obj.id} {...obj} />);
+	const skeleton = [...new Array(6)].map((_, index) => <PizzaBlockSceleton key={index} />);
 
 	return (
 		<div className="container">
@@ -42,10 +56,11 @@ export function Home() {
 			<h2 className="content__title">Все пиццы</h2>
 			<div className="content__items">
 				{isLoading
-					? [...new Array(6)].map((_, index) => <PizzaBlockSceleton key={index} />)		// Отобразить массив скелетонов
-					: items.map((obj) => <PizzaBlock key={obj.id} {...obj} />)									// Отобразить реальные пиццы
+					? skeleton		// Отобразить массив скелетонов
+					: pizzas			// Отобразить реальные пиццы
 				}
 			</div>
+			<Pagination onChangePage={(number) => setCurrentPage(number)} />
 		</div>
 	)
 }
