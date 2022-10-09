@@ -1,13 +1,14 @@
 import React from "react";
+import { SearchContext } from "../App";
 
 import { Categories } from "../components/Categories";
 import { Sort } from "../components/Sort";
 import { PizzaBlock } from "../components/PizzaBlock/PizzaBlock";
 import { PizzaBlockSceleton } from "../components/PizzaBlock/PizzaBlockSceleton";
 import { Pagination } from "../components/Pagination/Pagination";
+//============================================================================================================
 
-
-export function Home({ searchValue }) {
+export function Home() {
 
 	const [items, setItems] = React.useState([]);
 	const [isLoading, setIsLoading] = React.useState(true);		// Управляет тем что отображается - скелетон или пиццы
@@ -18,6 +19,9 @@ export function Home({ searchValue }) {
 	});
 
 	const [currentPage, setCurrentPage] = React.useState(1);	// Хук изменения страницы
+
+	const { searchValue } = React.useContext(SearchContext);	// Хук контекста
+
 
 	React.useEffect(() => {
 		setIsLoading(true);
@@ -55,10 +59,7 @@ export function Home({ searchValue }) {
 			</div>
 			<h2 className="content__title">Все пиццы</h2>
 			<div className="content__items">
-				{isLoading
-					? skeleton		// Отобразить массив скелетонов
-					: pizzas			// Отобразить реальные пиццы
-				}
+				{isLoading ? skeleton : pizzas}
 			</div>
 			<Pagination onChangePage={(number) => setCurrentPage(number)} />
 		</div>
