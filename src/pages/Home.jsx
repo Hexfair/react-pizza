@@ -6,7 +6,7 @@ import { Sort } from "../components/Sort";
 import { PizzaBlock } from "../components/PizzaBlock/PizzaBlock";
 import { PizzaBlockSceleton } from "../components/PizzaBlock/PizzaBlockSceleton";
 import { Pagination } from "../components/Pagination/Pagination";
-//============================================================================================================
+//========================================================================================================================
 
 export function Home() {
 
