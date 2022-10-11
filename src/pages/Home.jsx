@@ -1,7 +1,8 @@
 import React from "react";
 import { SearchContext } from "../App";
 import { useSelector, useDispatch } from 'react-redux';
-import { setCategoryId } from '../redux/slices/filterSlice'
+import { setCategoryId, setCurrentPage } from '../redux/slices/filterSlice';
+import axios from "axios";
 
 import { Categories } from "../components/Categories";
 import { Sort } from "../components/Sort";
@@ -18,18 +19,22 @@ export function Home() {
 	// const [sortType, setSortType] = React.useState({				// Хук для выбранного типа сортировки
 	// name: 'популярности', sortProperty: 'rating'
 	// });
-	const [currentPage, setCurrentPage] = React.useState(1);	// Хук изменения страницы
+	// const [currentPage, setCurrentPage] = React.useState(1);	// Хук изменения страницы
 	const { searchValue } = React.useContext(SearchContext);	// Хук контекста
 
 	// Используем Редакс
 	const dispatch = useDispatch();
 	// const categoryId = useSelector((state) => state.filter.categoryId);
 	// const sortType = useSelector((state) => state.filter.sort.sortProperty);
-	const { categoryId, sort } = useSelector((state) => state.filter);
+	const { categoryId, sort, currentPage } = useSelector((state) => state.filter);
 
 
 	const onChangeCategory = (id) => {
 		dispatch(setCategoryId(id))
+	}
+
+	const onChangePage = (number) => {
+		dispatch(setCurrentPage(number))
 	}
 
 	React.useEffect(() => {
@@ -42,15 +47,21 @@ export function Home() {
 		// Вариант фильтрации через запрос на бэкенд
 		const search = searchValue ? `&search=${searchValue}` : '';
 
-		fetch(`https://633b5933c1910b5de0c41000.mockapi.io/items?page=${currentPage}&limit=4&${category}&sortBy=${sortBy}&order=${order}${search}`)
-			.then((response) => response.json())
-			.then((arr) => {
-				setItems(arr);
-				setIsLoading(false);	// Выключить показ скелетона после загрузки пицц с сервера
-			})
+		axios.get(`https://633b5933c1910b5de0c41000.mockapi.io/items?page=${currentPage}&limit=4&${category}&sortBy=${sortBy}&order=${order}${search}`)
+			.then((res) => {
+				setItems(res.data);
+				setIsLoading(false);
+			});
+
+		// 	fetch(`https://633b5933c1910b5de0c41000.mockapi.io/items?page=${currentPage}&limit=4&${category}&sortBy=${sortBy}&order=${order}${search}`)
+		// 		.then((response) => response.json())
+		// 		.then((arr) => {
+		// 			setItems(arr);
+		// 			setIsLoading(false);
+		// 		})
+
 		window.scrollTo(0, 0);
 	}, [categoryId, sort.sortProperty, searchValue, currentPage])
-
 
 	// Вариант фильтрации, когда данные статичны и нет необходимости обращаться к бэкенду 
 	// const pizzas = items
@@ -70,7 +81,7 @@ export function Home() {
 			<div className="content__items">
 				{isLoading ? skeleton : pizzas}
 			</div>
-			<Pagination onChangePage={(number) => setCurrentPage(number)} />
+			<Pagination currentPage={currentPage} onChangePage={onChangePage} />
 		</div>
 	)
 }
