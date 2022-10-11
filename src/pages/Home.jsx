@@ -1,18 +1,20 @@
 import React from "react";
 import { SearchContext } from "../App";
 import { useSelector, useDispatch } from 'react-redux';
-import { setCategoryId, setCurrentPage } from '../redux/slices/filterSlice';
+import { setCategoryId, setCurrentPage, setFilters } from '../redux/slices/filterSlice';
 import axios from "axios";
+import qs from 'qs';
+import { useNavigate } from "react-router-dom";
 
 import { Categories } from "../components/Categories";
-import { Sort } from "../components/Sort";
+import { Sort, sortList } from "../components/Sort";
 import { PizzaBlock } from "../components/PizzaBlock/PizzaBlock";
 import { PizzaBlockSceleton } from "../components/PizzaBlock/PizzaBlockSceleton";
 import { Pagination } from "../components/Pagination/Pagination";
 //========================================================================================================================
 
 export function Home() {
-
+	const navigate = useNavigate();
 	const [items, setItems] = React.useState([]);
 	const [isLoading, setIsLoading] = React.useState(true);		// Управляет тем что отображается - скелетон или пиццы
 	// const [categoryId, setcategoryId] = React.useState(0);	// Хук изменения состояния категорий
@@ -21,6 +23,10 @@ export function Home() {
 	// });
 	// const [currentPage, setCurrentPage] = React.useState(1);	// Хук изменения страницы
 	const { searchValue } = React.useContext(SearchContext);	// Хук контекста
+
+	const isSearch = React.useRef(false);	// Переменная для работы хука с парсингом адресной строки браузера
+	const isMounted = React.useRef(false);	// Переменная для работы хука с вшиванием данных из редакса в адресную строку браузера
+
 
 	// Используем Редакс
 	const dispatch = useDispatch();
@@ -37,14 +43,35 @@ export function Home() {
 		dispatch(setCurrentPage(number))
 	}
 
+	/* ---- Хук для парсинга адресной строки браузера и передачи ее в редакс, чтобы применить фильтры, сортировку и т.д. ---- */
 	React.useEffect(() => {
+		if (window.location.search) {
+			const params = qs.parse(window.location.search.substring(1));
+			const sort = sortList.find(obj => obj.sortProperty === params.sortProperty)
+
+			dispatch(setFilters({
+				...params,
+				sort,
+			}));
+			isSearch.current = true;
+		}
+	}, [])
+	// --------------------------------------------------------------------
+
+	/* ---- Основная логика + хук для получения с бэкенда пицц и ререндера пицц при сортировке и фильтрации ---- */
+	const fetchPizzas = () => {
 		setIsLoading(true);
 
 		const category = categoryId > 0 ? `category=${categoryId}` : '';
 		const order = sort.sortProperty.includes('-') ? 'asc' : 'desc';
 		const sortBy = sort.sortProperty.replace('-', '');
 
-		// Вариант фильтрации через запрос на бэкенд
+		/* Вариант фильтрации по поиску (инпут), когда данные статичны и нет необходимости обращаться к бэкенду */
+		// const pizzas = items
+		// 	.filter(obj => obj.title.toLowerCase().includes(searchValue.toLowerCase()) ? true : false)
+		// 	.map((obj) => <PizzaBlock key={obj.id} {...obj} />);
+
+		/* Вариант поиска пиццы (инпут) через запрос на бэкенд */
 		const search = searchValue ? `&search=${searchValue}` : '';
 
 		axios.get(`https://633b5933c1910b5de0c41000.mockapi.io/items?page=${currentPage}&limit=4&${category}&sortBy=${sortBy}&order=${order}${search}`)
@@ -59,18 +86,36 @@ export function Home() {
 		// 			setItems(arr);
 		// 			setIsLoading(false);
 		// 		})
+	}
 
+	React.useEffect(() => {
 		window.scrollTo(0, 0);
+		if (!isSearch.current) {
+			fetchPizzas();
+		}
+		isSearch.current = false;
 	}, [categoryId, sort.sortProperty, searchValue, currentPage])
+	// --------------------------------------------------------------------
 
-	// Вариант фильтрации, когда данные статичны и нет необходимости обращаться к бэкенду 
-	// const pizzas = items
-	// 	.filter(obj => obj.title.toLowerCase().includes(searchValue.toLowerCase()) ? true : false)
-	// 	.map((obj) => <PizzaBlock key={obj.id} {...obj} />);
+	/* ---- Хук получает параметры из редакса (сортировка, фильтрация), делает из них строчку и вшивает ее в адресную строку браузера ---- */
+	React.useEffect(() => {
+		if (isMounted.current) {
+			const queryString = qs.stringify({
+				sortProperty: sort.sortProperty,
+				categoryId,
+				currentPage,
+			});
+			navigate(`?${queryString}`)
+		}
+		isMounted.current = true;
+	}, [categoryId, sort.sortProperty, currentPage])
+	// --------------------------------------------------------------------
+
+
+
 
 	const pizzas = items.map((obj) => <PizzaBlock key={obj.id} {...obj} />);
 	const skeleton = [...new Array(6)].map((_, index) => <PizzaBlockSceleton key={index} />);
-
 	return (
 		<div className="container">
 			<div className="content__top">
