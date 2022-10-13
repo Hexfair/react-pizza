@@ -87,6 +87,7 @@ export function Home() {
 		// 			setIsLoading(false);
 		// 		})
 	}
+	// --------------------------------------------------------------------
 
 	React.useEffect(() => {
 		window.scrollTo(0, 0);
