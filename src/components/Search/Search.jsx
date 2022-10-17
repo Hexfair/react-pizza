@@ -1,18 +1,21 @@
 import React from 'react';
 import debounce from 'lodash.debounce';
-import { SearchContext } from '../../App';
+import { setSearchValue } from '../../redux/slices/filterSlice';
 
 import styles from './Search.module.scss'
+import { useDispatch } from 'react-redux';
 //========================================================================================================================
 
 export function Search() {
+	const dispatch = useDispatch();
+
 	const [value, setValue] = React.useState('');			// Локальный стейт инпута - нужен для debounce
-	const { setSearchValue } = React.useContext(SearchContext);	// Глобальный стейт инпута
+	// const { setSearchValue } = React.useContext(SearchContext);	// Глобальный стейт инпута
 
 	// Делаем фокус в инпуте после того, как нажали крестик, то есть очистили инпут
 	const inputRef = React.useRef();
 	const onClickClear = () => {
-		setSearchValue('');
+		dispatch(setSearchValue(''));
 		setValue('');
 		inputRef.current.focus();
 	}
@@ -20,7 +23,9 @@ export function Search() {
 	// Делаем так, чтобы при вводе текста в инпут запрос на сервак не отправлялся после каждого символа
 	// Запрос будет отправляться только после работы функции debounce через определенный интервал времени
 	const updateSearchValue = React.useCallback(
-		debounce((str) => { setSearchValue(str) }, 750),
+		debounce((str) => {
+			dispatch(setSearchValue(str))
+		}, 750),
 		[],
 	);
 	const onChangeInput = (event) => {

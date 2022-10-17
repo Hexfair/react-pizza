@@ -1,5 +1,4 @@
 import React from "react";
-import { SearchContext } from "../App";
 import { useSelector, useDispatch } from 'react-redux';
 import { setCategoryId, setCurrentPage, setFilters } from '../redux/slices/filterSlice';
 import qs from 'qs';
@@ -21,7 +20,7 @@ export function Home() {
 	// name: 'популярности', sortProperty: 'rating'
 	// });
 	// const [currentPage, setCurrentPage] = React.useState(1);	// Хук изменения страницы
-	const { searchValue } = React.useContext(SearchContext);	// Хук контекста
+	// const { searchValue } = React.useContext(SearchContext);	// Хук контекста
 
 	const isSearch = React.useRef(false);	// Переменная для работы хука с парсингом адресной строки браузера
 	const isMounted = React.useRef(false);	// Переменная для работы хука с вшиванием данных из редакса в адресную строку браузера
@@ -30,7 +29,7 @@ export function Home() {
 	const dispatch = useDispatch();
 	// const categoryId = useSelector((state) => state.filter.categoryId);
 	// const sortType = useSelector((state) => state.filter.sort.sortProperty);
-	const { categoryId, sort, currentPage } = useSelector((state) => state.filter);
+	const { categoryId, sort, currentPage, searchValue } = useSelector((state) => state.filter);
 
 	const { items, status } = useSelector((state) => state.pizza);
 
