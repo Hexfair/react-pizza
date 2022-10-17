@@ -2,7 +2,7 @@ import React from "react";
 import { useSelector, useDispatch } from 'react-redux';
 import { setCategoryId, setCurrentPage, setFilters } from '../redux/slices/filterSlice';
 import qs from 'qs';
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { fetchPizzas } from "../redux/slices/pizzaSlice";
 
 import { Categories } from "../components/Categories";
@@ -116,7 +116,7 @@ export function Home() {
 	// --------------------------------------------------------------------
 
 
-	const pizzas = items.map((obj) => <PizzaBlock key={obj.id} {...obj} />);
+	const pizzas = items.map((obj) => <Link to={`/pizza/${obj.id}`} key={obj.id}><PizzaBlock {...obj} /></Link>);
 	const skeleton = [...new Array(6)].map((_, index) => <PizzaBlockSceleton key={index} />);
 	return (
 		<div className="container">
