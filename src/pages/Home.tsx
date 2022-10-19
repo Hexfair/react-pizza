@@ -12,7 +12,7 @@ import { PizzaBlockSceleton } from "../components/PizzaBlock/PizzaBlockSceleton"
 import { Pagination } from "../components/Pagination/Pagination";
 //========================================================================================================================
 
-export function Home() {
+export const Home: React.FC = () => {
 	const navigate = useNavigate();
 	// const [isLoading, setIsLoading] = React.useState(true);		// Управляет тем что отображается - скелетон или пиццы
 	// const [categoryId, setcategoryId] = React.useState(0);	// Хук изменения состояния категорий
@@ -29,16 +29,16 @@ export function Home() {
 	const dispatch = useDispatch();
 	// const categoryId = useSelector((state) => state.filter.categoryId);
 	// const sortType = useSelector((state) => state.filter.sort.sortProperty);
-	const { categoryId, sort, currentPage, searchValue } = useSelector((state) => state.filter);
+	const { categoryId, sort, currentPage, searchValue } = useSelector((state: any) => state.filter);
 
-	const { items, status } = useSelector((state) => state.pizza);
+	const { items, status } = useSelector((state: any) => state.pizza);
 
 
-	const onChangeCategory = (id) => {
+	const onChangeCategory = (id: number) => {
 		dispatch(setCategoryId(id))
 	}
 
-	const onChangePage = (number) => {
+	const onChangePage = (number: number) => {
 		dispatch(setCurrentPage(number))
 	}
 
@@ -73,13 +73,15 @@ export function Home() {
 		/* Вариант №2 фильтрации по поиску (инпут) через запрос на бэкенд */
 		const search = searchValue ? `&search=${searchValue}` : '';
 
-		dispatch(fetchPizzas({
-			sortBy,
-			order,
-			category,
-			search,
-			currentPage,
-		}));
+		dispatch(
+			// @ts-ignore
+			fetchPizzas({
+				sortBy,
+				order,
+				category,
+				search,
+				currentPage,
+			}));
 		// setIsLoading(false);
 
 		/* Вариант №2 запроса данных (пицц) с бэкенда
@@ -116,7 +118,7 @@ export function Home() {
 	// --------------------------------------------------------------------
 
 
-	const pizzas = items.map((obj) => <PizzaBlock key={obj.id} {...obj} />);
+	const pizzas = items.map((obj: any) => <PizzaBlock key={obj.id} {...obj} />);
 	const skeleton = [...new Array(6)].map((_, index) => <PizzaBlockSceleton key={index} />);
 	return (
 		<div className="container">

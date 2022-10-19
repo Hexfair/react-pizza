@@ -3,7 +3,7 @@ import React from 'react';
 import styles from './NotFoundBlock.module.scss'
 //========================================================================================================================
 
-export function NotFoundBlock() {
+export const NotFoundBlock: React.FC = () => {
 	return (
 		<div className={styles.root}>
 			<h1>

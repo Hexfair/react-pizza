@@ -6,18 +6,21 @@ import styles from './Search.module.scss'
 import { useDispatch } from 'react-redux';
 //========================================================================================================================
 
-export function Search() {
+export const Search: React.FC = () => {
 	const dispatch = useDispatch();
 
 	const [value, setValue] = React.useState('');			// Локальный стейт инпута - нужен для debounce
 	// const { setSearchValue } = React.useContext(SearchContext);	// Глобальный стейт инпута
 
 	// Делаем фокус в инпуте после того, как нажали крестик, то есть очистили инпут
-	const inputRef = React.useRef();
+	const inputRef = React.useRef<HTMLInputElement>(null);
 	const onClickClear = () => {
 		dispatch(setSearchValue(''));
 		setValue('');
-		inputRef.current.focus();
+		// if (inputRef.current) {
+		// 	inputRef.current.focus();
+		// }
+		inputRef.current?.focus(); // Второй вариант проверки на null с помощью оператора опциональной последовательности
 	}
 
 	// Делаем так, чтобы при вводе текста в инпут запрос на сервак не отправлялся после каждого символа
@@ -28,7 +31,7 @@ export function Search() {
 		}, 750),
 		[],
 	);
-	const onChangeInput = (event) => {
+	const onChangeInput = (event: any) => {
 		setValue(event.target.value);
 		updateSearchValue(event.target.value)
 	}

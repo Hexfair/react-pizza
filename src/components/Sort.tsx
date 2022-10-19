@@ -2,7 +2,14 @@ import React from "react";
 import { useSelector, useDispatch } from 'react-redux';
 import { setSort } from '../redux/slices/filterSlice'
 //========================================================================================================================
-export const sortList = [
+
+// Типизации константы sortList
+type SortItem = {
+	name: string;
+	sortProperty: string;
+};
+
+export const sortList: SortItem[] = [
 	{ name: 'популярности (desc)', sortProperty: 'rating' },
 	{ name: 'популярности (asc)', sortProperty: '-rating' },
 	{ name: 'цене (desc)', sortProperty: 'price' },
@@ -11,23 +18,23 @@ export const sortList = [
 	{ name: 'алфавиту (asc)', sortProperty: '-title' }
 ];
 
-export function Sort() {
+export const Sort: React.FC = () => {
 
 	// Используем Редакс
 	const dispatch = useDispatch();
-	const sort = useSelector(state => state.filter.sort);
+	const sort = useSelector((state: any) => state.filter.sort);
 
 	const [open, setOpen] = React.useState(false); 			// Хук для отображения/скрытия попапа с выбором сортировки
 
-	const onClickListItem = (obj) => {
+	const onClickListItem = (obj: SortItem) => {
 		dispatch(setSort(obj));
 		setOpen(false);
 	}
 
 	/* ---- Логика для закрытия окна сортировки при клике вне окошка сортировки ---- */
-	const sortRef = React.useRef();
+	const sortRef = React.useRef<HTMLDivElement>(null);
 	React.useEffect(() => {
-		const handleClickOutside = (event) => {
+		const handleClickOutside = (event: any) => {
 			if (!event.path.includes(sortRef.current)) {
 				setOpen(false);
 			}

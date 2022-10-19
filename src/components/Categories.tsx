@@ -1,10 +1,15 @@
 import React from "react";
 //========================================================================================================================
 
-export function Categories({ value, onClickCategory }) {
+const categories = ['Все', 'Мясные', 'Вегетарианская', 'Гриль', 'Острые', 'Закрытые'];
 
-	const categories = ['Все', 'Мясные', 'Вегетарианская', 'Гриль', 'Острые', 'Закрытые'];
+// Типизация пропсов
+type CategoriesProps = {
+	value: number;
+	onClickCategory: any
+}
 
+export const Categories: React.FC<CategoriesProps> = ({ value, onClickCategory }) => {
 	return (
 		<div className="categories">
 			<ul>
