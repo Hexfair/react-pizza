@@ -3,9 +3,13 @@ import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 //============================================================================================================
 
-export const FullPizza = () => {
+export const FullPizza: React.FC = () => {
 	const params = useParams();
-	const [pizza, setPizza] = React.useState();
+	const [pizza, setPizza] = React.useState<{
+		imageUrl: string,
+		title: string,
+		price: number,
+	}>();
 	const navigate = useNavigate();
 
 	React.useEffect(() => {
@@ -24,7 +28,7 @@ export const FullPizza = () => {
 	// Если в переменной pizza еще нет никаких пицц, то будет ошибка, так как JS будет пытаться найти
 	// imageUrl, title и price у indefined. Чтобы избежать этого, сделаем простую проверку
 	if (!pizza) {
-		return 'Загрузка....'
+		return <>'Загрузка....'</>
 	}
 
 	return (
