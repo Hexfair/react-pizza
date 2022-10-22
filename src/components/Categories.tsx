@@ -6,7 +6,7 @@ const categories = ['Все', 'Мясные', 'Вегетарианская', '�
 // Типизация пропсов
 type CategoriesProps = {
 	value: number;
-	onClickCategory: any
+	onClickCategory: (i: number) => void;
 }
 
 export const Categories: React.FC<CategoriesProps> = ({ value, onClickCategory }) => {

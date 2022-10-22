@@ -34,8 +34,9 @@ export const Sort: React.FC = () => {
 	/* ---- Логика для закрытия окна сортировки при клике вне окошка сортировки ---- */
 	const sortRef = React.useRef<HTMLDivElement>(null);
 	React.useEffect(() => {
-		const handleClickOutside = (event: any) => {
-			if (!event.path.includes(sortRef.current)) {
+		const handleClickOutside = (event: MouseEvent) => {
+			const _event = event as MouseEvent & { path: Node[] }			// Лайфхак для того, чтобы не подчеркивал path
+			if (sortRef.current && !_event.path.includes(sortRef.current)) {
 				setOpen(false);
 			}
 		}

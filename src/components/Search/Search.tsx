@@ -14,7 +14,7 @@ export const Search: React.FC = () => {
 
 	// Делаем фокус в инпуте после того, как нажали крестик, то есть очистили инпут
 	const inputRef = React.useRef<HTMLInputElement>(null);
-	const onClickClear = () => {
+	const onClickClear = (event: React.MouseEvent<SVGSVGElement>) => {
 		dispatch(setSearchValue(''));
 		setValue('');
 		// if (inputRef.current) {
@@ -31,7 +31,7 @@ export const Search: React.FC = () => {
 		}, 750),
 		[],
 	);
-	const onChangeInput = (event: any) => {
+	const onChangeInput = (event: React.ChangeEvent<HTMLInputElement>) => {
 		setValue(event.target.value);
 		updateSearchValue(event.target.value)
 	}
