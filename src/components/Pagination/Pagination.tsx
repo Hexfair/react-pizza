@@ -1,7 +1,5 @@
 import React from 'react';
 import ReactPaginate from 'react-paginate';
-import { NamedTupleMember } from 'typescript';
-
 import styles from './Pagination.module.scss'
 //========================================================================================================================
 

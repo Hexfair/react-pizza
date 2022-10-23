@@ -1,9 +1,7 @@
 import React from "react";
 import { useSelector, useDispatch } from 'react-redux';
-import { setCategoryId, setCurrentPage, setFilters } from '../redux/slices/filterSlice';
 import qs from 'qs';
 import { useNavigate } from "react-router-dom";
-import { fetchPizzas, SearchPizzaParams } from "../redux/slices/pizzaSlice";
 
 import { Categories } from "../components/Categories";
 import { SortPopup as Sort, sortList } from "../components/Sort";
@@ -11,6 +9,11 @@ import { PizzaBlock } from "../components/PizzaBlock/PizzaBlock";
 import { PizzaBlockSceleton } from "../components/PizzaBlock/PizzaBlockSceleton";
 import { Pagination } from "../components/Pagination/Pagination";
 import { RootState, useAppDispatch } from "../redux/store";
+import { selectorFilter } from "../redux/filter/selectors";
+import { selectorPizza } from "../redux/pizza/selectors";
+import { setCategoryId, setCurrentPage, setFilters } from "../redux/filter/slice";
+import { fetchPizzas } from "../redux/pizza/asyncActions";
+import { SearchPizzaParams } from "../redux/pizza/types";
 //========================================================================================================================
 
 export const Home: React.FC = () => {
@@ -30,9 +33,9 @@ export const Home: React.FC = () => {
 	const dispatch = useAppDispatch();
 	// const categoryId = useSelector((state) => state.filter.categoryId);
 	// const sortType = useSelector((state) => state.filter.sort.sortProperty);
-	const { categoryId, sort, currentPage, searchValue } = useSelector((state: RootState) => state.filter);
+	const { categoryId, sort, currentPage, searchValue } = useSelector(selectorFilter);
 
-	const { items, status } = useSelector((state: RootState) => state.pizza);
+	const { items, status } = useSelector(selectorPizza);
 
 
 	const onChangeCategory = React.useCallback((id: number) => {
