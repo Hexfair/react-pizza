@@ -3,13 +3,14 @@ import { useSelector, useDispatch } from 'react-redux';
 import { setCategoryId, setCurrentPage, setFilters } from '../redux/slices/filterSlice';
 import qs from 'qs';
 import { useNavigate } from "react-router-dom";
-import { fetchPizzas } from "../redux/slices/pizzaSlice";
+import { fetchPizzas, SearchPizzaParams } from "../redux/slices/pizzaSlice";
 
 import { Categories } from "../components/Categories";
-import { Sort, sortList } from "../components/Sort";
+import { SortPopup, sortList } from "../components/Sort";
 import { PizzaBlock } from "../components/PizzaBlock/PizzaBlock";
 import { PizzaBlockSceleton } from "../components/PizzaBlock/PizzaBlockSceleton";
 import { Pagination } from "../components/Pagination/Pagination";
+import { RootState, useAppDispatch } from "../redux/store";
 //========================================================================================================================
 
 export const Home: React.FC = () => {
@@ -26,12 +27,12 @@ export const Home: React.FC = () => {
 	const isMounted = React.useRef(false);	// Переменная для работы хука с вшиванием данных из редакса в адресную строку браузера
 
 	// Используем Редакс
-	const dispatch = useDispatch();
+	const dispatch = useAppDispatch();
 	// const categoryId = useSelector((state) => state.filter.categoryId);
 	// const sortType = useSelector((state) => state.filter.sort.sortProperty);
-	const { categoryId, sort, currentPage, searchValue } = useSelector((state: any) => state.filter);
+	const { categoryId, sort, currentPage, searchValue } = useSelector((state: RootState) => state.filter);
 
-	const { items, status } = useSelector((state: any) => state.pizza);
+	const { items, status } = useSelector((state: RootState) => state.pizza);
 
 
 	const onChangeCategory = (id: number) => {
@@ -42,15 +43,17 @@ export const Home: React.FC = () => {
 		dispatch(setCurrentPage(number))
 	}
 
-	/* ---- Хук для парсинга адресной строки браузера и передачи ее в редакс, чтобы применить фильтры, сортировку и т.д. ---- */
+	/* ---- Хук для парсинга адресной строки браузера при первом рендере 
+	и передачи ее в редакс, чтобы применить фильтры, сортировку и т.д. ---- */
 	React.useEffect(() => {
 		if (window.location.search) {
-			const params = qs.parse(window.location.search.substring(1));
-			const sort = sortList.find(obj => obj.sortProperty === params.sortProperty)
-
+			const params = qs.parse(window.location.search.substring(1)) as unknown as SearchPizzaParams;
+			const sort = sortList.find(obj => obj.sortProperty === params.sortBy)
 			dispatch(setFilters({
-				...params,
-				sort,
+				searchValue: params.search,
+				categoryId: Number(params.category),
+				currentPage: Number(params.currentPage),
+				sort: sort || sortList[0],
 			}));
 			isSearch.current = true;
 		}
@@ -74,13 +77,12 @@ export const Home: React.FC = () => {
 		const search = searchValue ? `&search=${searchValue}` : '';
 
 		dispatch(
-			// @ts-ignore
 			fetchPizzas({
 				sortBy,
 				order,
 				category,
 				search,
-				currentPage,
+				currentPage: String(currentPage),
 			}));
 		// setIsLoading(false);
 
@@ -124,7 +126,7 @@ export const Home: React.FC = () => {
 		<div className="container">
 			<div className="content__top">
 				<Categories value={categoryId} onClickCategory={onChangeCategory} />
-				<Sort />
+				<SortPopup />
 			</div>
 			<h2 className="content__title">Все пиццы</h2>
 			{

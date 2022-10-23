@@ -1,6 +1,6 @@
 import React from 'react';
 import { useDispatch } from 'react-redux';
-import { addItem, minusItem, removeItem } from '../redux/slices/cartSlice';
+import { addItem, CartItem, minusItem, removeItem } from '../redux/slices/cartSlice';
 //========================================================================================================================
 
 // Типизируем пропсы
@@ -14,17 +14,17 @@ type CartItemProps = {
 	size: number;
 }
 
-export const CartItem: React.FC<CartItemProps> = ({ id, title, price, count, imageUrl, type, size }) => {
+export const CartItemBlock: React.FC<CartItemProps> = ({ id, title, price, count, imageUrl, type, size }) => {
 
 	/* ---- Увеличить количество "+" пицц в корзине ---- */
 	const dispatch = useDispatch();
 	const onClickPlus = () => {
-		dispatch(addItem({ id }))
+		dispatch(addItem({ id } as CartItem))
 	}
 
 	/* ---- Уменьшить количество "-" пицц в корзине ---- */
 	const onClickMinus = () => {
-		dispatch(minusItem({ id }))
+		dispatch(minusItem(id))
 	}
 
 	/* ---- Удалить пиццу из корзины ---- */
