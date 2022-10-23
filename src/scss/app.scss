@@ -179,7 +179,24 @@ body {
 						display: none;
 					}
 				}
+
+				&:disabled {
+					border-color: rgb(166, 163, 163);
+					transform: none;
+
+					svg path {
+						fill: rgb(166, 163, 163);
+					}
+
+					&:hover {
+						background-color: white;
+					}
+				}
 			}
+
+
+
+
 
 			b {
 				font-size: 22px;

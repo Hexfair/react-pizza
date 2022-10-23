@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 import { fetchPizzas, SearchPizzaParams } from "../redux/slices/pizzaSlice";
 
 import { Categories } from "../components/Categories";
-import { SortPopup, sortList } from "../components/Sort";
+import { SortPopup as Sort, sortList } from "../components/Sort";
 import { PizzaBlock } from "../components/PizzaBlock/PizzaBlock";
 import { PizzaBlockSceleton } from "../components/PizzaBlock/PizzaBlockSceleton";
 import { Pagination } from "../components/Pagination/Pagination";
@@ -35,9 +35,9 @@ export const Home: React.FC = () => {
 	const { items, status } = useSelector((state: RootState) => state.pizza);
 
 
-	const onChangeCategory = (id: number) => {
+	const onChangeCategory = React.useCallback((id: number) => {
 		dispatch(setCategoryId(id))
-	}
+	}, [])
 
 	const onChangePage = (number: number) => {
 		dispatch(setCurrentPage(number))
@@ -126,7 +126,7 @@ export const Home: React.FC = () => {
 		<div className="container">
 			<div className="content__top">
 				<Categories value={categoryId} onClickCategory={onChangeCategory} />
-				<SortPopup />
+				<Sort value={sort} />
 			</div>
 			<h2 className="content__title">Все пиццы</h2>
 			{

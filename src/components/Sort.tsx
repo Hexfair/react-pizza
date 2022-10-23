@@ -1,6 +1,6 @@
 import React from "react";
 import { useSelector, useDispatch } from 'react-redux';
-import { setSort, SortPropertyEnum } from '../redux/slices/filterSlice'
+import { setSort, Sort, SortPropertyEnum } from '../redux/slices/filterSlice'
 //========================================================================================================================
 
 // Типизации константы sortList
@@ -8,6 +8,10 @@ type SortItem = {
 	name: string;
 	sortProperty: SortPropertyEnum;
 };
+
+type SortPopupProps = {
+	value: Sort;
+}
 
 export const sortList: SortItem[] = [
 	{ name: 'популярности (desc)', sortProperty: SortPropertyEnum.RATING_DESC },
@@ -18,11 +22,10 @@ export const sortList: SortItem[] = [
 	{ name: 'алфавиту (asc)', sortProperty: SortPropertyEnum.TITLE_ASC }
 ];
 
-export const SortPopup: React.FC = () => {
+export const SortPopup: React.FC<SortPopupProps> = ({ value }) => {
 
 	// Используем Редакс
 	const dispatch = useDispatch();
-	const sort = useSelector((state: any) => state.filter.sort);
 
 	const [open, setOpen] = React.useState(false); 			// Хук для отображения/скрытия попапа с выбором сортировки
 
@@ -55,7 +58,7 @@ export const SortPopup: React.FC = () => {
 					/>
 				</svg>
 				<b>Сортировка по:</b>
-				<span onClick={() => setOpen(!open)}>{sort.name}</span>
+				<span onClick={() => setOpen(!open)}>{value.name}</span>
 			</div>
 			{open && (
 				<div className="sort__popup">
@@ -64,7 +67,7 @@ export const SortPopup: React.FC = () => {
 							<li
 								key={index}
 								onClick={() => onClickListItem(obj)}
-								className={sort.sortProperty === obj.sortProperty ? 'active' : ''}>
+								className={value.sortProperty === obj.sortProperty ? 'active' : ''}>
 								{obj.name}
 							</li>
 						))}
